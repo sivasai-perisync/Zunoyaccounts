@@ -26,7 +26,7 @@ const [email, setEmail] = useState('');
     <>
       <header className=" pt-2 pl-4  w-auto md:w-[1200px]">
         <img
-          src="./public/Screenshot 2025-02-14 at 10-26-43 Login Zunoy Accounts.png"
+          src="https://account.zunoy.com/logo.svg"
           alt=""
         />
       </header>

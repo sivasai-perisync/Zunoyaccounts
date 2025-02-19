@@ -64,7 +64,7 @@ const navigate = useNavigate();
       <div className="w-1/3 p-16 flex flex-col justify-center hidden lg:flex">
       <header className=" pt-2 pl-4   absolute top-2 left-2">
             <img
-              src="./public/Screenshot 2025-02-14 at 10-26-43 Login Zunoy Accounts.png"
+              src="https://account.zunoy.com/logo.svg"
               alt=""
             />
           </header> 
@@ -95,7 +95,7 @@ const navigate = useNavigate();
       <div className="w-2/3 bg-white p-10 xl:px-80 sm:px-4 flex flex-col justify-center border-l sm:w-full md:w-full lg:w-2/3">
       <header className=" pt-2 pl-4  w-auto md:w-[1200px] absolute top-2 left-2 lg:hidden sm:block">
             <img
-              src="./public/Screenshot 2025-02-14 at 10-26-43 Login Zunoy Accounts.png"
+              src="https://account.zunoy.com/logo.svg"
               alt=""
             />
           </header>

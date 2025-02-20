@@ -68,49 +68,6 @@ export const SendOptiApi = (data, setLoader, setOtpSent, setError) => {
     });
 };
 
-// export const productsdata = (setLoader,setData) => {
-//   return getAPICall(ProductsUrl)
-//     .then((res) => {
-//       console.log("API Response:", res);
-//       setLoader(false);
-//       setData(res.data.products)
-
-//       // if (res.data.msg === "data received") {
-//       //   setError("");
-//       // } else {
-//       //   setError("unexpected response: " + (res.msg || "No message"));
-//       // }
-//     })
-//     .catch((err) => {
-//       console.error("Error:", err);
-//       setLoader(false);
-//       // setError("Error sending data .please try again.");
-//       throw err;
-//     })
-   
-// };
 
 
-// let productsapiCalled = false;
 
-// export const productsdata = async (setLoader, setData) => {
-//   if (productsapiCalled) return 
-//   (productsapiCalled = true) 
-//   try {
-   
-//     setLoader(true); 
-
-//     const res = await getAPICall(ProductsUrl);
-//     console.log("API Response:", res);
-
-//     setData(res.data.products);
-   
-//   } catch (err) {
-//     console.error("Error:", err);
-//     setMessage("Error loading data. Please try again.");
-    
-//   }
-//    finally {
-//     setLoader(false); 
-//   }
-// };

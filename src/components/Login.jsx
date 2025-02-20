@@ -1,305 +1,215 @@
-import * as React from "react";
+
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-
+import { AccountsRootUrl } from "../APIconfig/ConstantRootURL/RootUrl";
+import {  IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const LoginPage = () => {
-  
-const navigate=useNavigate();
-const [email, setEmail] = useState('');
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
- const [focused, setFocused] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+    const [focused, setFocused] = useState(false);
+  
+    const [showPassword, setShowPassword] = useState(false);
 
   const handleEmailChange = (event) => {
     const value = event.target.value;
     setEmail(value);
-
-   
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    setEmailError(!emailRegex.test(value)); 
+    setEmailError(!emailRegex.test(value));
   };
 
+  const handleLogin = async () => {
+    setEmailError(!email);
+    setPasswordError(!password);
+
+    if (!email || !password) {
+      setErrorMessage("Email and password are required.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${AccountsRootUrl}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          deviceInfo: {
+            platform: "web",
+            os: "Linux x86_64",
+            browser: "Chrome",
+            device: "133.0.0.0",
+            deviceName: "Linux x86_64",
+            ipAddress: "106.51.219.124",
+          },
+          email,
+          password,
+          killSession: false,
+          otp: 0,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        navigate("/Mainpage");
+      } else {
+        setErrorMessage(data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      setErrorMessage("Network error. Please try again later.");
+    }
+  };
 
   return (
-    <>
-      <header className=" pt-2 pl-4  w-auto md:w-[1200px]">
-        <img
-          src="https://account.zunoy.com/logo.svg"
-          alt=""
-        />
-      </header>
-      <main className=" text-black w-full flex  xl:flex lg:flex md:flex sm:flex-wrap-reverse overflow-hidden ">
-        <div className="w-[1200px]  pt-72 pl-44 pr-44 sm:pl-4 sm:pr-4 md:pl-4 md:pr-4  lg:pl-44 lg:pr-44 ">
-          <h1 className="text-3xl font-bold">Accounts</h1>
-          <p className="text-gray-600 font-normal pt-3">
-            Zunoy Accounts is a secure and efficient account management system
-            designed to streamline user authentication, preferences, and access
-            control. It offers seamless integration with various platforms,
-            ensuring a smooth user experience with features like dark mode
-            preferences, API-based authentication, and enhanced security
-            protocols.
-          </p>
-          <h1 className="text-2xl font-bold pt-8">Featured Products</h1>
-          <div className="flex flex-wrap gap-10 pt-3">
-            <img
-              src="./public/Screenshot 2025-02-14 at 10-26-52 Login Zunoy Accounts.png"
-              alt=""
-            />
-            <img
-              src="./public/Screenshot 2025-02-14 at 10-26-59 Login Zunoy Accounts.png"
-              alt=""
-            />
-            <img
-              src="./public/Screenshot 2025-02-14 at 10-27-04 Login Zunoy Accounts.png"
-              alt=""
-            />
-          </div>
-          <footer>
-            <p className="text-center text-gray-500 pt-72 ">
-              © 2025, Zunoy Pvt. Ltd. All Rights Reserved.
-            </p>
-          </footer>
+    <div className="flex h-screen w-full">
+      {/* Left Column */}
+      <div className="w-2/3 hidden lg:flex flex-col justify-center  p-16 max-w-4xl mx-auto">
+        <header className="absolute top-2 left-2">
+          <img src="https://account.zunoy.com/logo.svg" alt="Logo" />
+        </header>
+        <p className="text-3xl font-bold mt-6 text-start max-w-lg">Accounts</p>
+        <p className="text-gray-600 font-normal pt-3  max-w-3xl">
+          Zunoy Accounts is a secure and efficient account management system
+          designed to streamline user authentication, preferences, and access
+          control. It offers seamless integration with various platforms,
+          ensuring a smooth user experience with features like dark mode
+          preferences, API-based authentication, and enhanced security
+          protocols.
+        </p>
+        <div className="text-2xl font-bold pt-8  ">
+          Featured Products
         </div>
-        <div className="w-[400px] pt-44 pl-20 lg:pt-44  lg:pl-20 md:pt-4  md:pl-4 sm:pt-4  sm:pl-4 sm:pr-4 border-l border-solid border-gray-400 xl:border-l xl:border-solid xl:border-gray-400 lg:border-l sm:border-none ">
-          <h1 className="text-3xl font-bold">Log in</h1>
-          <p className="text-gray-500 mb-8">
-            Don't have an account?{" "}
-            <button  className="text-blue-500" onClick={()=>navigate("/Register")}>
-              {" "}
-              Register
-            </button>
-          </p>
-          <TextField 
-            className="w-[100%] "
-            error={emailError}
-            id="filled-error-helper-text"
-            label="Email Address"
-            defaultValue=""
-            
-            onChange={handleEmailChange}
-            helperText={emailError ? "Please enter a valid email" : "Email is required"}
-             onFocus={() => setFocused(true)}
-                  onBlur={() => setFocused(false)}
-            sx={{
-              "& .MuiInputBase-root": {
-                border: `2px solid ${focused ? "#1976D2" : "#F8F8F8"}`, // Black default, Blue on focus
-              
-                borderRadius: "4px",
-                backgroundColor: "white",
-              },
-              "& .MuiInputBase-root:hover": {
-                border: `1px solid ${focused ? "#1976D2" : "#BEBEBE"}`, 
-               backgroundColor:"#F8F8F8", // Keep border black on hover
-              },
-              "& .MuiInputBase-root.Mui-focused": {
-                border: "3px solid #1976D2", // Blue border on focus
-                backgroundColor:"white"
-              },
-              "& .MuiFilledInput-root:before, & .MuiFilledInput-root:after": {
-                display: "none", // Removes bottom border
-              },
-            }}
-           
-          />{" "}
-          <br />
-          <br />
-          <TextField
-            className="w-[100%]"
-            error
-            id="filled-error-helper-text"
-            label="Password"
-            defaultValue=""
-           
-          />{" "}
-          <br />
-          <br />
-          <div>
+        <div className="flex flex-wrap gap-10 pt-3">
+          <img
+            src="./public/Screenshot 2025-02-14 at 10-26-52 Login Zunoy Accounts.png"
+            alt=""
+          />
+          <img
+            src="./public/Screenshot 2025-02-14 at 10-26-59 Login Zunoy Accounts.png"
+            alt=""
+          />
+          <img
+            src="./public/Screenshot 2025-02-14 at 10-27-04 Login Zunoy Accounts.png"
+            alt=""
+          />
+        </div>
+
+        <div className="text-gray-600 mt-12 absolute bottom-2 left-1/4">
+          © 2025, Zunoy Pvt. Ltd. All Rights Reserved.
+        </div>
+      </div>
+
+      {/* Right Column */}
+      <div className="w-1/3 bg-white p-10 flex flex-col justify-center  border-l max-w-md mx-auto sm:w-full lg:w-1/3 sm:border-l-0 lg:border-l sm:p-4 lg:p-10">
+        <header className="absolute top-2 left-2 lg:hidden">
+          <img src="https://account.zunoy.com/logo.svg" alt="Logo" />
+        </header>
+        <h2 className="text-2xl font-bold mb-4">Log in</h2>
+        <p className="text-gray-500 mb-8">
+          Don't have an account? 
+          <button
+            className="text-blue-500"
+            onClick={() => navigate("/Register")}
+          >
             {" "}
-            <Button
-              className="w-[100%] h-12 rounded-3xl text-xs"
-              variant="contained"
-            >
-              Log in
-            </Button>{" "}
-          </div>
-          <br />
-    <a className=" text-blue-500" href="">Forgot Password?</a><br /><br />
-<p className= "text-center text-gray-400   text-sm">Version 6.4.6
+             Register
+          </button>
+        </p>
+        {errorMessage && (
+          <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
+        )}
+
+        <TextField
+          className="w-full"
+          error={emailError}
+          label="Email Address"
+          variant="filled"
+          onChange={handleEmailChange}
+          helperText={emailError ? "Please enter a valid email" : ""}
+          sx={{
+            "& .MuiInputBase-root": {
+              border: `2px solid ${focused ? "#1976D2" : "#F8F8F8"}`,
+              borderRadius: "8px",
+              backgroundColor: "white",
+            },
+            "& .MuiInputBase-root:hover": {
+              border: `1px solid ${focused ? "#1976D2" : "#BEBEBE"}`,
+              backgroundColor: "#F8F8F8",
+            },
+            "& .MuiInputBase-root.Mui-focused": {
+              border: "3px solid #1976D2",
+              backgroundColor: "white",
+            },
+            "& .MuiFilledInput-root:before, & .MuiFilledInput-root:after": {
+              display: "none",
+            },
+          }}
+        />
+        <br />
+        <TextField
+      className="w-full"
+      error={passwordError}
+      label="Password"
+      type={showPassword ? "text" : "password"}
+      variant="filled"
+      onChange={(e) => setPassword(e.target.value)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      helperText={passwordError ? "Password is required" : ""}
+      sx={{
+        "& .MuiInputBase-root": {
+          border: `2px solid ${focused ? "#1976D2" : "#F8F8F8"}`,
+          borderRadius: "8px",
+          backgroundColor: "white",
+        },
+        "& .MuiInputBase-root:hover": {
+          border: `1px solid ${focused ? "#1976D2" : "#BEBEBE"}`,
+          backgroundColor: "#F8F8F8",
+        },
+        "& .MuiInputBase-root.Mui-focused": {
+          border: "3px solid #1976D2",
+          backgroundColor: "white",
+        },
+        "& .MuiFilledInput-root:before, & .MuiFilledInput-root:after": {
+          display: "none",
+        },
+      }}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end">
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+        <br />
+        <Button
+          className="w-full h-12 rounded-3xl text-xs"
+          variant="contained"
+          onClick={handleLogin}
+        >
+          Log in
+        </Button>
+        <br />
+        <a className="text-blue-500 text-left" href="#">
+          Forgot Password?
+        </a>
+        <p className= "text-center text-gray-400  pt-4 text-sm">Version 6.4.6
 </p>
 <p className=" text-center text-sm mt-2"><a className="text-blue-500 " href="">Terms and Conditions</a></p>
-        </div>
-      </main>
-    </>
+      </div>
+    </div>
   );
-}
+};
 
 export default LoginPage;
-
-// import { useState } from "react";
-// import TextField from "@mui/material/TextField";
-// import Button from "@mui/material/Button";
-// import InputAdornment from "@mui/material/InputAdornment";
-// // import IconButton from "@mui/material/IconButton";
-// // import Visibility from "@mui/icons-material/Visibility";
-// // import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
-// const LoginPage = () => {
-//   const [email, setEmail] = useState("");
-//   const [emailError, setEmailError] = useState(false);
-//   const [password, setPassword] = useState("");
-//   const [showPassword, setShowPassword] = useState(false);
-
-//   const handleEmailChange = (e) => {
-//     setEmail(e.target.value);
-//     setEmailError(false);
-//   };
-
-//   const handleBlur = () => {
-//     setEmailError(email.trim() === "");
-//   };
-
-//   const handlePasswordChange = (e) => {
-//     setPassword(e.target.value);
-//   };
-
-//   const handleSubmit = () => {
-//     if (!email.trim()) {
-//       setEmailError(true);
-//     } else {
-//       console.log("Logging in with:", { email, password });
-//       // Add authentication logic
-//     }
-//   };
-
-//   return (
-//     <div className="flex items-center justify-center h-screen bg-gray-50">
-//       <div className="w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] bg-white p-8 rounded-lg shadow-md flex">
-        
-//         {/* Left Section - Info & Products */}
-//         <div className="w-1/2 hidden md:block">
-//           <h1 className="text-2xl font-bold text-gray-900">Accounts</h1>
-//           <p className="text-gray-500 mt-2">
-//             Zunoy Accounts is a secure and efficient account management system designed 
-//             to streamline user authentication, preferences, and access control.
-//           </p>
-//           <p className="text-gray-500 mt-1">
-//             It offers seamless integration with various platforms and features like dark 
-//             mode preferences, API-based authentication, and enhanced security protocols.
-//           </p>
-
-//           {/* Featured Products */}
-//           <h2 className="mt-6 text-lg font-semibold">Featured Products</h2>
-//           <div className="mt-3 flex space-x-3">
-//             <div className="border rounded-lg p-2 px-4 flex items-center space-x-2 shadow-sm">
-//               <span>📄</span>
-//               <p className="font-medium">FormFlow</p>
-//             </div>
-//             <div className="border rounded-lg p-2 px-4 flex items-center space-x-2 shadow-sm">
-//               <span>🔍</span>
-//               <p className="font-medium">WatchTower</p>
-//             </div>
-//             <div className="border rounded-lg p-2 px-4 flex items-center space-x-2 shadow-sm">
-//               <span>🌐</span>
-//               <p className="font-medium">MockAPI</p>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Right Section - Login Form */}
-//         <div className="w-full md:w-1/2 text-center">
-//           <h1 className="text-2xl font-bold text-gray-900">Log in</h1>
-//           <p className="text-gray-500 mt-1">
-//             Don’t have an account? <a href="#" className="text-blue-600">Register</a>
-//           </p>
-
-//           {/* Email Input */}
-//           <div className="mt-6">
-//             <TextField
-//               fullWidth
-//               variant="outlined"
-//               label="Email Address"
-//               value={email}
-//               onChange={handleEmailChange}
-//               onBlur={handleBlur}
-//               error={emailError}
-//               helperText={emailError ? "Email is required" : ""}
-//               sx={{
-//                 "& .MuiOutlinedInput-root": {
-//                   border: `2px solid ${emailError ? "red" : "black"}`,
-//                   borderRadius: "6px",
-//                   backgroundColor: "white",
-//                   "&:hover": { border: "2px solid black" },
-//                 },
-//               }}
-//             />
-//           </div>
-
-//           {/* Password Input */}
-//           <div className="mt-4">
-//             <TextField
-//               fullWidth
-//               variant="outlined"
-//               label="Password"
-//               type={showPassword ? "text" : "password"}
-//               value={password}
-//               onChange={handlePasswordChange}
-//               // InputProps={{
-//               //   endAdornment: (
-//               //     <InputAdornment position="end">
-//               //       <IconButton onClick={() => setShowPassword(!showPassword)}>
-//               //         {showPassword ? <VisibilityOff /> : <Visibility />}
-//               //       </IconButton>
-//               //     </InputAdornment>
-//               //   ),
-//               // }}
-//               sx={{
-//                 "& .MuiOutlinedInput-root": {
-//                   border: "2px solid black",
-//                   borderRadius: "6px",
-//                   backgroundColor: "white",
-//                   "&:hover": { border: "2px solid black" },
-//                 },
-//               }}
-//             />
-//           </div>
-
-//           {/* Log In Button */}
-//           <div className="mt-6">
-//             <Button
-//               fullWidth
-//               variant="contained"
-//               className="w-full"
-//               onClick={handleSubmit}
-//               sx={{
-//                 backgroundColor: "#6366F1",
-//                 fontSize: "16px",
-//                 textTransform: "none",
-//                 padding: "10px",
-//                 borderRadius: "8px",
-//                 "&:hover": { backgroundColor: "#4f46e5" },
-//               }}
-//             >
-//               Log in
-//             </Button>
-//           </div>
-
-//           {/* Forgot Password */}
-//           <div className="mt-4">
-//             <a href="#" className="text-blue-600">Forgot password?</a>
-//           </div>
-
-//           {/* Version & Terms */}
-//           <div className="mt-6 text-sm text-gray-500">
-//             <p>Version 6.4.8</p>
-//             <a href="#" className="text-blue-600">Terms and Conditions</a>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LoginPage;
-

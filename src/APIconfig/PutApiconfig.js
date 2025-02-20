@@ -27,41 +27,4 @@ export const ResetPasswordApi = (data, { setloader, setStatus }) => {
   };
 };
 
-// export const VerifyOtpAndNavigate = (otp, sentOtp, navigate) => {
-//   return (dispatch) => {
-//     if (otp === sentOtp) {
-//       toast.success("OTP verified successfully");
-//       navigate("/setuppassword");
-//     } else {
-//       toast.error("Invalid OTP. Please try again.");
-//     }
-//   };
-// };
-// export const verifyOtp = async () => {
-//   const enteredOtp = otp.join(""); // Join OTP digits into a string
 
-//   if (enteredOtp.length < 6) {
-//     setOtpError(true);
-//     return;
-//   }
-
-//   setLoader(true);
-//   setOtpError(false);
-
-//   try {
-//     const response = await axios.put("https://znginx.perisync.work/api/v1/acc", {
-//       email: email,
-//       otp: enteredOtp,
-//     });
-
-//     if (response.status === 200) {
-//       navigate("/setuppassword"); // Navigate if OTP is correct
-//     } else {
-//       setOtpError(true);
-//     }
-//   } catch (error) {
-//     setOtpError(true);
-//   } finally {
-//     setLoader(false);
-//   }
-// };

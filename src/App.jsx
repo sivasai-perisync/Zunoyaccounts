@@ -5,6 +5,7 @@ import { Router ,Routes,Route} from "react-router-dom";
 import RegisterPage from "./components/Register";
 import Setuppassword from "./components/Setuppassword";
 import Profile from "./components/Profile";
+import Mainpage from "./components/Mainpage";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
     <Route path="/register" element={<RegisterPage/>}></Route>
     <Route path="/Setuppassword" element={<Setuppassword/>}></Route>
     <Route path="/Profile" element={<Profile/>}></Route>
+    <Route path="/Mainpage" element={<Mainpage/>}></Route>
   </Routes>
    
     </>

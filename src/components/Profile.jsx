@@ -32,6 +32,7 @@ const Profile = () => {
   const [focused, setFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const options = ["Google", "Banner", "Referral", "Social_Media"];
 
@@ -54,6 +55,14 @@ const Profile = () => {
     setErrorMessage("");
 
     const requestData = { ...formData, accountType };
+    if (accountType === "Organization") {
+      requestData.organization = {
+        name: companyDetails.companyName,
+        domain: companyDetails.companyDomain,
+        allowMember: true,
+        size: parseInt(companyDetails.teamSize, 10), // Convert to number
+      };
+    }
 
     try {
       const response = await axios.post(
@@ -100,7 +109,10 @@ const Profile = () => {
     <div className="flex h-screen">
       <div className="w-1/3 p-16 flex flex-col justify-center hidden lg:flex">
         <header className="pt-2 pl-4 absolute top-2 left-2">
-          <img src="https://account.zunoy.com/logo.svg" alt="" />
+          <img
+            src="/public/Screenshot 2025-02-14 at 10-26-43 Login Zunoy Accounts.png"
+            alt=""
+          />
         </header>
         <h2 className="text-xl font-semibold">
           Create your Zunoy account in three simple steps
@@ -136,11 +148,21 @@ const Profile = () => {
       <div className="flex h-screen">
         <div className="w-2/3 bg-white p-10 xl:px-80 sm:px-4 flex flex-col justify-center border-l sm:w-full">
           <header className="pt-2 pl-4 w-auto md:w-[1200px] absolute top-2 left-2 lg:hidden sm:block">
-            <img src="https://account.zunoy.com/logo.svg" alt="" />
+            <img
+              src="/public/Screenshot 2025-02-14 at 10-26-43 Login Zunoy Accounts.png"
+              alt=""
+            />
           </header>
-          <h2 className="text-2xl font-bold text-center mb-4">
+          <h2 className="text-2xl font-bold text-left">
             Complete Your Registration
           </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Already have an account?{" "}
+            <a href="#" className="text-blue-600">
+              Log in
+            </a>
+          </p>
+
           {errorMessage && (
             <p className="text-red-500 text-center">{errorMessage}</p>
           )}
@@ -227,6 +249,12 @@ const Profile = () => {
                 },
               }}
             />
+             <div className={`flex items-center  gap-2 p-2`}>
+        {/* Country Code Box */}
+        <div className="px-3 py-2 h-12 text-center bg-gray-100 border border-gray-300 rounded-md text-gray-700">
+          +91
+        </div>
+
             <TextField
               label="Phone No"
               name="phoneNo"
@@ -255,7 +283,7 @@ const Profile = () => {
                   display: "none", // Removes bottom border
                 },
               }}
-            />
+            /></div>
 
             <TextField
               select
@@ -293,22 +321,29 @@ const Profile = () => {
               ))}
             </TextField>
 
-            <RadioGroup
-              row
-              value={accountType}
-              onChange={(e) => setUserType(e.target.value)}
-            >
-              <FormControlLabel
-                value="Organization"
-                control={<Radio />}
-                label="Organization"
-              />
-              <FormControlLabel
-                value="Freelancer"
-                control={<Radio />}
-                label="Freelancer"
-              />
-            </RadioGroup>
+            <div className="w-full border border-gray-300 rounded-lg px-4 flex justify-between items-center">
+              <RadioGroup
+                row
+                value={accountType}
+                onChange={(e) => setUserType(e.target.value)}
+                className="w-full flex justify-between"
+              >
+                <FormControlLabel
+                  value="Organization"
+                  control={<Radio />}
+                  label="Organization"
+                />
+
+                {/* Center Divider */}
+                <div className="h-12 w-px bg-gray-300"></div>
+
+                <FormControlLabel
+                  value="Freelancer"
+                  control={<Radio />}
+                  label="Freelancer"
+                />
+              </RadioGroup>
+            </div>
 
             {accountType === "Organization" && (
               <div className="mt-4 space-y-2">

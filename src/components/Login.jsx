@@ -56,24 +56,67 @@ const LoginPage = () => {
         }),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
+  
+
+  const token = response.headers.get("at");
+      if (response.ok && token) {
+        localStorage.setItem("at", token);
+        await fetchDarkModePreference(token);
+        await fetchProducts(token);
         navigate("/Mainpage");
       } else {
+        const data = await response.json();
         setErrorMessage(data.message || "Login failed. Please try again.");
       }
     } catch (error) {
       setErrorMessage("Network error. Please try again later.");
     }
   };
-
+  const fetchDarkModePreference = async (token) => {
+    try {
+      const response = await fetch("https://znginx.perisync.work/api/v1/acc/account/darkMode", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem("darkMode", JSON.stringify(data.darkMode));
+      }
+    } catch (error) {
+      console.error("Failed to fetch dark mode preference", error);
+    }
+  };
+  const fetchProducts = async (token) => {
+    try {
+      const response = await fetch("https://znginx.perisync.work/api/v1/acc/products", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.ok) {
+        const products = await response.json();
+        localStorage.setItem("products", JSON.stringify(products)); // Store products if needed
+        console.log("Fetched products:", products);
+      } else {
+        console.error("Failed to fetch products");
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
   return (
     <div className="flex h-screen w-full">
       {/* Left Column */}
       <div className="w-2/3 hidden lg:flex flex-col justify-center  p-16 max-w-4xl mx-auto">
         <header className="absolute top-2 left-2">
-          <img src="https://account.zunoy.com/logo.svg" alt="Logo" />
+          <img src="/public/Screenshot 2025-02-14 at 10-26-43 Login Zunoy Accounts.png" alt="Logo" />
         </header>
         <p className="text-3xl font-bold mt-6 text-start max-w-lg">Accounts</p>
         <p className="text-gray-600 font-normal pt-3  max-w-3xl">
@@ -110,7 +153,7 @@ const LoginPage = () => {
       {/* Right Column */}
       <div className="w-1/3 bg-white p-10 flex flex-col justify-center  border-l max-w-md mx-auto sm:w-full lg:w-1/3 sm:border-l-0 lg:border-l sm:p-4 lg:p-10">
         <header className="absolute top-2 left-2 lg:hidden">
-          <img src="https://account.zunoy.com/logo.svg" alt="Logo" />
+          <img src="/public/Screenshot 2025-02-14 at 10-26-43 Login Zunoy Accounts.png" alt="Logo" />
         </header>
         <h2 className="text-2xl font-bold mb-4">Log in</h2>
         <p className="text-gray-500 mb-8">
@@ -136,12 +179,12 @@ const LoginPage = () => {
           helperText={emailError ? "Please enter a valid email" : ""}
           sx={{
             "& .MuiInputBase-root": {
-              border: `2px solid ${focused ? "#1976D2" : "#F8F8F8"}`,
+              border: `2px solid ${focused ? "#F8F8F8" : "#F8F8F8"}`,
               borderRadius: "8px",
               backgroundColor: "white",
             },
             "& .MuiInputBase-root:hover": {
-              border: `1px solid ${focused ? "#1976D2" : "#BEBEBE"}`,
+              border: `1px solid ${focused ? "#BEBEBE" : "#BEBEBE"}`,
               backgroundColor: "#F8F8F8",
             },
             "& .MuiInputBase-root.Mui-focused": {
@@ -166,7 +209,7 @@ const LoginPage = () => {
       helperText={passwordError ? "Password is required" : ""}
       sx={{
         "& .MuiInputBase-root": {
-          border: `2px solid ${focused ? "#1976D2" : "#F8F8F8"}`,
+          border: `2px solid ${focused ? "#F8F8F8" : "#F8F8F8"}`,
           borderRadius: "8px",
           backgroundColor: "white",
         },
@@ -201,9 +244,9 @@ const LoginPage = () => {
           Log in
         </Button>
         <br />
-        <a className="text-blue-500 text-left" href="#">
+        <button className="text-blue-500 text-left" onClick={() => navigate("/ResetPassword")}>
           Forgot Password?
-        </a>
+        </button >
         <p className= "text-center text-gray-400  pt-4 text-sm">Version 6.4.6
 </p>
 <p className=" text-center text-sm mt-2"><a className="text-blue-500 " href="">Terms and Conditions</a></p>
